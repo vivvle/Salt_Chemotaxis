@@ -1,0 +1,15 @@
+﻿Variable Name,description,
+strain,name strains of worms used,
+,PS312,Pristionchus pacificus wildtype strain
+,csu79,Pristionchus pacificus gcy-22 mutant 
+,csu80,Pristionchus pacificus gcy-22 mutant
+Salt,"Salt used as attraction, the concentration is at 2.5 M",
+,NH4Br,Ammonium bromide
+,NH4I,Ammonium iodide
+,NH4Cl,Ammonium chloride
+,LiCl,Lithium chloride
+,NaCl,Sodium chloride
+,NaAc,Sodium acetate
+A,Attractant which is the salts ,
+C,Counter-attractant which is nanopure water (which does not have any salts),
+Dispersed,Worms who moved away from the loading zone but not in the attractant or the counter-attractant zones,

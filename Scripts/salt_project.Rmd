@@ -1,0 +1,55 @@
+---
+title: "Salt Chemotaxis"
+author: "Vivian Vy Le"
+date: '2022-03-17'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+Guanylyl cyclases (*gcy*) are enzymes that can convert GTP to cGMP. These proteins are necessary for regulating the cGMP-gated cation channels. The regulation of cGMP-gated cation channels helps produce calcium currents, which helps nematodes chemotaxis and detect salt concentrations in the environment.
+
+While all the information on chemosensation is in the *Caenorhabditis elegans*, there is an interest in studying salt chemosensation and the gcy gene family in host associated and parasitic nematodes. *Pristionochus pacifcius* is a non-parasitic nematode species that has a host assocation towards the Oriental beetle, and is attracted to a beetle sex pheromone.
+
+In *C. elegans*, there are a total of 34 *gcy* genes and are expressed in the amphid sensory neuron ASE. It is unclear if the *gcy* genes in *P.pacificus* have similar gene functions  in chemotaxis towards water soluble salts and are expressed in the amphid sensory neuron. With *P. pacificus*' host association towards the Oriental beetle, it would be interesting to study if cGMP signaling contributes to the species' host-seeking abilities.
+
+## Load libraries
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(palettetown)
+```
+
+### Load data
+```{r}
+salt <- read.csv(here("Data", "salt_CTX_data.csv"))
+allgenes <- read.csv(here("Data", "salt_ctx_all_genes.csv"))
+```
+
+### view data 
+```{r}
+glimpse(salt)
+glimpse(allgenes)
+view(salt)
+view(allgenes)
+```
+
+## Data analysis
+The raw data consists of the number of worms in the attractant zone, the number of worms in the counter-attractant zone, and the number of worms dispersed from the loading zone. I calculated the chemotaxis index (CI) for the data set.
+
+```{r}
+salt$total <- (salt$A + salt$C) #adding A and C for total worms participating
+salt$CI <-((salt$A - salt$C)/(salt$total)) #calculating for chemotaxis index
+salt$participation <- ((salt$total/(salt$total + salt$Dispersed))) #calculating for worms who participated in the assay
+view(salt)
+
+salt_data <- salt %>%
+  relocate("total", .before = "Dispersed") %>% #moved total column before dispersed
+  write.csv(here("Output","salt_CI.csv")) #saved as an output with calculations
+view(salt_data)
+```
+

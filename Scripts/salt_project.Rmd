@@ -26,6 +26,8 @@ library(tidyverse)
 library(ggplot2)
 library(here)
 library(palettetown)
+library(LaCroixColoR)
+library(magick)
 ```
 
 ### Load data
@@ -48,7 +50,8 @@ view(allgenes)
 
 Chemosensation can be quantified by attraction and repulsion. To measure responses, we established a salt gradient on media.
 
-![Chemotaxis template](https://github.com/vivvle/Salt_Chemotaxis/blob/main/Photos/template_labeled.png)
+<img src = "https://raw.githubusercontent.com/vivvle/Salt_Chemotaxis/main/Photos/template_labeled.png">
+
 
 A represents attractant. Salts are considered attractants for the purpose of the experiment.
 
@@ -69,6 +72,8 @@ We wash and place the worms on the loading zone of the plate. Once the worms are
 
 The raw data consists of the number of worms in the attractant zone, the number of worms in the counter-attractant zone, and the number of worms dispersed from the loading zone. I calculated the chemotaxis index (CI) for the data set.
 
+
+### gcy-22 mutants 
 ```{r}
 salt$total <- (salt$A + salt$C) #adding A and C for total worms participating
 salt$CI <-((salt$A - salt$C)/(salt$total)) #calculating for chemotaxis index
@@ -76,7 +81,14 @@ salt$participation <- ((salt$total/(salt$total + salt$Dispersed))) #calculating 
 view(salt)
 
 salt_data <- salt %>%
-  relocate("total", .before = "Dispersed") %>% #moved total column before dispersed
-  write.csv(here("Output","salt_CI.csv")) #saved as an output with calculations
+  relocate("total", .before = "Dispersed") #moved total column before dispersed
 view(salt_data)
+write.csv(here("Output","salt_CI.csv")) #saved as an output with calculations
 ```
+
+
+### All mutants
+```{r}
+
+```
+

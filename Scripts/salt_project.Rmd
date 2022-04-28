@@ -2,7 +2,9 @@
 title: "Salt Chemotaxis"
 author: "Vivian Vy Le"
 date: '2022-03-17'
-output: html_document
+output: 
+  html_document:
+    toc: TRUE
 ---
 
 ```{r setup, include=FALSE}
@@ -10,13 +12,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
+
 Guanylyl cyclases (*gcy*) are enzymes that can convert GTP to cGMP. These proteins are necessary for regulating the cGMP-gated cation channels. The regulation of cGMP-gated cation channels helps produce calcium currents, which helps nematodes chemotaxis and detect salt concentrations in the environment.
 
 While all the information on chemosensation is in the *Caenorhabditis elegans*, there is an interest in studying salt chemosensation and the gcy gene family in host associated and parasitic nematodes. *Pristionochus pacifcius* is a non-parasitic nematode species that has a host assocation towards the Oriental beetle, and is attracted to a beetle sex pheromone.
 
-In *C. elegans*, there are a total of 34 *gcy* genes and are expressed in the amphid sensory neuron ASE. It is unclear if the *gcy* genes in *P.pacificus* have similar gene functions  in chemotaxis towards water soluble salts and are expressed in the amphid sensory neuron. With *P. pacificus*' host association towards the Oriental beetle, it would be interesting to study if cGMP signaling contributes to the species' host-seeking abilities.
+In *C. elegans*, there are a total of 34 *gcy* genes and are expressed in the amphid sensory neuron ASE. It is unclear if the *gcy* genes in *P.pacificus* have similar gene functions in chemotaxis towards water soluble salts and are expressed in the amphid sensory neuron. With *P. pacificus*' host association towards the Oriental beetle, it would be interesting to study if cGMP signaling contributes to the species' host-seeking abilities.
 
 ## Load libraries
+
 ```{r}
 library(tidyverse)
 library(ggplot2)
@@ -25,12 +29,14 @@ library(palettetown)
 ```
 
 ### Load data
+
 ```{r}
 salt <- read.csv(here("Data", "salt_CTX_data.csv"))
 allgenes <- read.csv(here("Data", "salt_ctx_all_genes.csv"))
 ```
 
-### view data 
+### view data
+
 ```{r}
 glimpse(salt)
 glimpse(allgenes)
@@ -38,7 +44,29 @@ view(salt)
 view(allgenes)
 ```
 
+## Method
+
+Chemosensation can be quantified by attraction and repulsion. To measure responses, we established a salt gradient on media.
+
+![Chemotaxis template](https://github.com/vivvle/Salt_Chemotaxis/blob/main/Photos/template_labeled.png)
+
+A represents attractant. Salts are considered attractants for the purpose of the experiment.
+
+The list of salts used are the following:
+
+-   NH4Br
+-   NH4Cl
+-   NH4I
+-   LiCl
+-   NaCl
+-   NaAc
+
+C represents the counter-attractant. We used water as the counter-attractant.
+
+We wash and place the worms on the loading zone of the plate. Once the worms are placed onto the plate, the assay starts and the worms move for 3-5 hours before counting.
+
 ## Data analysis
+
 The raw data consists of the number of worms in the attractant zone, the number of worms in the counter-attractant zone, and the number of worms dispersed from the loading zone. I calculated the chemotaxis index (CI) for the data set.
 
 ```{r}
@@ -52,4 +80,3 @@ salt_data <- salt %>%
   write.csv(here("Output","salt_CI.csv")) #saved as an output with calculations
 view(salt_data)
 ```
-

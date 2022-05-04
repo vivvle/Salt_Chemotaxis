@@ -75,20 +75,68 @@ The raw data consists of the number of worms in the attractant zone, the number 
 
 ### gcy-22 mutants 
 ```{r}
-salt$total <- (salt$A + salt$C) #adding A and C for total worms participating
-salt$CI <-((salt$A - salt$C)/(salt$total)) #calculating for chemotaxis index
-salt$participation <- ((salt$total/(salt$total + salt$Dispersed))) #calculating for worms who participated in the assay
-view(salt)
-
 salt_data <- salt %>%
-  relocate("total", .before = "Dispersed") #moved total column before dispersed
-view(salt_data)
-write.csv(here("Output","salt_CI.csv")) #saved as an output with calculations
+  mutate(total = (A+C)) %>% #adding A and C for total worm participating in the assay
+  mutate(CI = ((A-C)/(total))) %>% #calculating for the chemotaxis index with the worms participating in the assay
+  mutate(participation = (total)/(total+Dispersed)) %>% #calculating for the fraction of worm participating from the population
+  relocate("total", .before = "Dispersed") %>% #moved total column before dispersed
+  mutate(Strain = factor(Strain,
+                         levels = c("wildtype (PS312)", "gcy-22 (csu79)", "gcy-22 (csu80)"))) %>%
+  mutate(Salt = factor(Salt,
+                       levels = c("NH4Br", "NH4Cl", "NH4I", "LiCl", "NaCl", "NaAc")))
+salt_data
+
+
+gcy_data <- salt_data %>%
+  select(Strain, Salt, CI) %>%
+  group_by(Strain, Salt) %>%
+  summarise(average = mean(CI, na.rm = TRUE),
+            st_dev = sd(CI, na.rm = TRUE))
+gcy_data
+```
+```{r}
+gcy_data %>%
+  ggplot(aes(x = Salt, y = average, fill = Strain)) +
+  geom_col(position = "dodge") +
+  ylim(-1,1) +
+  scale_fill_manual(values = pokepal(2)) +
+  labs(title = "Salt Chemotaxis for gcy-22",
+       x = "Salt",
+       y = "Chemotaxis Index (CI)")
 ```
 
 
 ### All mutants
 ```{r}
+allgenes_data <- allgenes %>%
+  mutate(total = (A+C)) %>%
+  mutate(CI = (A-C)/(total)) %>%
+  mutate(participation = (total)/(total+Dispersed)) %>%
+  relocate("total", .before = "Dispersed") %>%
+  mutate(Salt = factor(Salt,
+                       levels = c("NH4Br", "NH4Cl", "NH4I", "LiCl", "NaCl", "NaAc"))) %>%
+  mutate(Strain = factor(Strain,
+                         levels = c("wildtype (PS312)", "gcy-22 (csu79)", "gcy-22 (csu80)", 
+                                    "che-1 (ot5012)", "che-1 (ot5013)", "daf-11 (mok83)", 
+                                    "daf-11 (mok84)", "tax-2 (mok59)")))
 
+allgenes_data
+
+genes_ctx <- allgenes_data %>%
+  group_by(Strain, Salt) %>%
+  summarise(average = mean(CI, na.rm = TRUE),
+            st_dev = sd(CI, na.rm = TRUE))
+genes_ctx
+```
+### plot for all mutants
+```{r}
+genes_ctx %>% 
+  ggplot(aes(x = Salt, y = average, fill = Strain)) +
+  geom_col(position = "dodge") +
+  ylim(-1,1) +
+  scale_fill_manual(values = pokepal(3)) +
+  labs(title = "Salt Chemotaxis",
+       x = "Salt",
+       y = "Chemotaxis Index (CI)")
 ```
 

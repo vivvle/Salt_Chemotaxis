@@ -5,10 +5,11 @@ date: '2022-03-17'
 output: 
   html_document:
     toc: TRUE
+    theme: lumen
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 # Introduction
@@ -17,7 +18,7 @@ Guanylyl cyclases (*gcy*) are enzymes that can convert GTP to cGMP. These protei
 
 While all the information on chemosensation is in the *Caenorhabditis elegans*, there is an interest in studying salt chemosensation and the gcy gene family in host associated and parasitic nematodes. *Pristionochus pacifcius* is a non-parasitic nematode species that has a host assocation towards the Oriental beetle, and is attracted to a beetle sex pheromone.
 
-In *C. elegans*, there are a total of 34 *gcy* genes and are expressed in the amphid sensory neuron ASE. It is unclear if the *gcy* genes in *P.pacificus* have similar gene functions in chemotaxis towards water soluble salts and are expressed in the amphid sensory neuron. With *P. pacificus*' host association towards the Oriental beetle, it would be interesting to study if cGMP signaling contributes to the species' host-seeking abilities.
+It is unclear if the *gcy* genes in *P.pacificus* have similar gene functions in chemotaxis towards water soluble salts and are expressed in the amphid sensory neuron. With *P. pacificus*' host association towards the Oriental beetle, it would be interesting to study if cGMP signaling contributes to the species' host-seeking abilities.
 
 ## Load libraries
 
@@ -37,13 +38,11 @@ salt <- read.csv(here("Data", "salt_CTX_data.csv"))
 allgenes <- read.csv(here("Data", "salt_ctx_all_genes.csv"))
 ```
 
-### view data
+### View data
 
 ```{r}
 glimpse(salt)
 glimpse(allgenes)
-view(salt)
-view(allgenes)
 ```
 
 ## Method
@@ -84,7 +83,6 @@ salt_data <- salt %>%
                          levels = c("wildtype (PS312)", "gcy-22 (csu79)", "gcy-22 (csu80)"))) %>%
   mutate(Salt = factor(Salt,
                        levels = c("NH4Br", "NH4Cl", "NH4I", "LiCl", "NaCl", "NaAc")))
-salt_data
 
 
 gcy_data <- salt_data %>%
@@ -92,7 +90,6 @@ gcy_data <- salt_data %>%
   group_by(Strain, Salt) %>%
   summarise(average = mean(CI, na.rm = TRUE),
             st_dev = sd(CI, na.rm = TRUE))
-gcy_data
 ```
 ```{r}
 gcy_data %>%
@@ -120,15 +117,14 @@ allgenes_data <- allgenes %>%
                                     "che-1 (ot5012)", "che-1 (ot5013)", "daf-11 (mok83)", 
                                     "daf-11 (mok84)", "tax-2 (mok59)")))
 
-allgenes_data
 
 genes_ctx <- allgenes_data %>%
   group_by(Strain, Salt) %>%
   summarise(average = mean(CI, na.rm = TRUE),
             st_dev = sd(CI, na.rm = TRUE))
-genes_ctx
+
 ```
-### plot for all mutants
+### Plot for all mutants
 ```{r}
 genes_ctx %>% 
   ggplot(aes(x = Salt, y = average, fill = Strain)) +

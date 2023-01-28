@@ -34,8 +34,8 @@ library(magick)
 ### Load data
 
 ```{r}
-salt <- read.csv(here("Data", "salt_CTX_data.csv"))
-allgenes <- read.csv(here("Data", "salt_ctx_all_genes.csv"))
+salt <- read_csv(here("Data", "salt_CTX_data.csv"))
+allgenes <- read_csv(here("Data", "salt_ctx_all_genes.csv"))
 ```
 
 ### View data
@@ -69,10 +69,20 @@ We wash and place the worms on the loading zone of the plate. Once the worms are
 
 # Data analysis
 
-The raw data consists of the number of worms in the attractant zone, the number of worms in the counter-attractant zone, and the number of worms dispersed from the loading zone. I calculated the chemotaxis index (CI) for the data set.
+The raw data consists of the number of worms in the attractant zone, the number of worms in the counter-attractant zone, and the number of worms dispersed from the loading zone. We calculated the chemotaxis index (CI) for the data set.
+
+## C. elegans vs P. pacificus
+
+First, we looked into the salt responses in P. pacificus and compared them to C. elegans.
+```{r}
+
+```
 
 
-## gcy-22 mutants 
+
+## gcy-22 mutant
+
+Using CRISPR/Cas9 editing technology, we recovered two reduction-of-function gcy-22 alleles. We then performed salt chemotaxis assays with these alleles.
 ```{r}
 salt_data <- salt %>%
   mutate(total = (A+C)) %>% #adding A and C for total worm participating in the assay
@@ -94,8 +104,10 @@ gcy_data <- salt_data %>%
             st_dev = sd(CI, na.rm = TRUE)) #calculating for standard deviation
 gcy_data
 ```
+
+
 ### Plot for gcy-22 mutants
-```{r}
+```{r, gcy_22_plot, outwidth = "60%", fig.align='center'}
 plotbase <- function (data, x, y){
   ggplot(data = data, aes(x = Salt, y = average, fill = Strain)) + #creating a plot function for the data
     geom_col(position = "dodge") +
@@ -151,20 +163,23 @@ tax <-genes_ctx %>% #separating for tax-2
    filter(Strain == "wildtype (PS312)" | Strain == "tax-2 (mok59)")
 tax
 ```
+
 ## Plot for daf-11
-```{r}
+```{r, daf_11_plot, outwidth = "60%", fig.align='center'}
 plotbase(daf, x, y) +
   scale_fill_manual(values = pokepal(3)) +
   labs(subtitle = "daf-11 mutants")
 ```
-## Plot for che-1
-```{r}
+
+### Plot for che-1
+```{r, che_1_plot, outwidth = "60%", fig.align='center'}
 plotbase(che1, x, y) +
   scale_fill_manual(values = pokepal(3)) +
   labs(subtitle = "che-1 mutants")
 ```
+
 ## Plot for tax-2
-```{r}
+```{r, tax_2_plot, outwidth = "60%", fig.align='center'}
 plotbase(tax, x, y) +
   scale_fill_manual(values = pokepal(3)) +
   labs(subtitle = "tax-2 mutant")
@@ -172,7 +187,7 @@ plotbase(tax, x, y) +
 
 
 ## Plot for all mutants
-```{r}
+```{r, allstrains_plot, outwidth = "60%", fig.align='center'}
 plotbase(genes_ctx, x, y) +
   scale_fill_manual(values = pokepal(3)) +
   labs(subtitle = "Overview of genes involved in chemosensation")

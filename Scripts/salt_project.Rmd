@@ -36,6 +36,7 @@ library(magick)
 ```{r}
 salt <- read_csv(here("Data", "salt_CTX_data.csv"))
 allgenes <- read_csv(here("Data", "salt_ctx_all_genes.csv"))
+celegans <- read_csv(here("Data", "salt_ctx_n2.csv"))
 ```
 
 ### View data
@@ -75,14 +76,45 @@ The raw data consists of the number of worms in the attractant zone, the number 
 
 First, we looked into the salt responses in P. pacificus and compared them to C. elegans.
 ```{r}
+celegans_data <- celegans %>%
+  mutate(total = (A+C)) %>%
+  mutate(CI = (A-C)/(total)) %>%
+  mutate(participation = (total)/(total+Dispersed)) %>%
+  relocate("total", .before = "Dispersed") %>%
+  mutate(Strain = factor(Strain,
+                         levels = c("N2", "PS312"))) %>%
+  mutate(Salt = factor(Salt,
+                       levels = c("NH4Br", "NH4Cl", "NH4I", "LiCl", "NaCl", "NaAc", "NH4Ac")))
 
+celegans_stats <- celegans_data %>%
+  select(Strain, Salt, CI) %>%
+  group_by(Strain, Salt) %>%
+  summarise(average = mean(CI, na.rm = TRUE), #calculating for average
+            st_dev = sd(CI, na.rm = TRUE)) #calculating for standard deviation
+  
+```
+## Plotting interspecies comparison
+
+```{r, N2_vs_PS312, outwidth = "60%", fig.align='center'}
+plotbase <- function (data, x, y){
+  ggplot(data = data, aes(x = Salt, y = average, fill = Strain)) + #creating a plot function for the data
+    geom_col(position = "dodge") +
+    ylim(-1,1) + #setting y axis limits for graph
+    labs(title = "Salt Chemotaxis",
+         x = "Salts",
+         y = "Chemotaxis Index (CI)")
+}
+
+plotbase(celegans_stats, x, y) +
+  scale_fill_manual(values = pokepal(3)) +
+  labs(subtitle = "C. elegans vs P. pacificus responses to salt cues") #subtitle indicates which strains are on the plot
 ```
 
 
 
-## gcy-22 mutant
+## Ppa-gcy-22.1 mutant
 
-Using CRISPR/Cas9 editing technology, we recovered two reduction-of-function gcy-22 alleles. We then performed salt chemotaxis assays with these alleles.
+Using CRISPR/Cas9 editing technology, we recovered two reduction-of-function Ppa-gcy-22.1 alleles. We then performed salt chemotaxis assays with these alleles.
 ```{r}
 salt_data <- salt %>%
   mutate(total = (A+C)) %>% #adding A and C for total worm participating in the assay
